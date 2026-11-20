@@ -155,8 +155,16 @@ kbd{font-family:inherit;background:#fff;border:1px solid var(--line);border-bott
 .tiers .tr.on span,.tiers .tr.on b,.tiers .tr.on b small{color:#fff}
 @media(max-width:520px){.tiers{grid-template-columns:repeat(3,1fr)}}
 .tiers.hev{grid-template-columns:repeat(3,1fr)}
-.tiers-h{margin-top:16px;font-size:12px;color:#ffb055;font-weight:700}
-.tiers-h+.tiers{margin-top:6px}
+.tiers-h{margin-top:18px;font-size:16px;color:#ffb055;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
+.tiers-h svg{width:18px;height:18px}
+.tiers .tr b{white-space:nowrap}
+.tiers .tr.on{animation:tbob 1.6s ease-in-out infinite}
+@keyframes tbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.incnote{display:flex;align-items:flex-start;gap:9px;margin-top:14px;background:rgba(255,140,30,.1);border:1px solid rgba(255,140,30,.35);color:#ffb055;border-radius:12px;padding:11px 13px;font-size:14px;font-weight:700;line-height:1.5}
+.incnote svg{flex:none;margin-top:2px;color:#ff9a22}
+.incnote small{font-size:12.5px;font-weight:600;color:#f0a65c}
+.gauge .gl{display:inline-flex;align-items:center;gap:6px}.gauge .gl svg{color:#ff9a22}
+.tiers-h+.tiers{margin-top:8px}
 .askp{font-size:44px;letter-spacing:-1px}
 .lvals .t{font-size:12.5px;color:#a3a3a3;margin-bottom:7px}
 .hero .lbl+.lsel{margin-top:8px}
@@ -572,7 +580,7 @@ html.authed #login{display:none}
     <textarea id="io-text" rows="4" placeholder="내보낸 설정 문자열을 붙여넣고 [적용]을 누르세요"></textarea>
     <div class="row" style="margin-top:8px"><button class="btn sm" id="io-apply">적용</button><span class="muted" id="io-msg"></span></div>
   </div>
-  <div class="card pad" style="margin-top:16px">
+  <div class="card pad hide" style="margin-top:16px">
     <h2 class="sec" style="font-size:17px"><span class="b"><svg class="i s"><use href="#i-pin"/></svg></span>차종별 저장된 작업 조건</h2>
     <p class="muted">조회 화면에서 "이 엔진 조건 저장"을 누른 차종이에요 (엔진오일 언더커버·하부 필터).</p>
     <table class="list" id="flags-table"></table>
@@ -650,7 +658,7 @@ const CATS = [
 ];
 const CAT = Object.fromEntries(CATS.map(c=>[c.k,c]));
 const SCHEMA = {
-  engine:[['t4','3~4L 정찰가','3L 미만 포함 · 에어크리너 포함',56000],['t5','4.1~5L 정찰가','',67000],['t6','5.1~6L 정찰가','',76000],['t7','6.1~7L 정찰가','',85000],['t8','7.1~8L 정찰가','',94000],['over','8L 초과','0이면 별도 문의',0],['h4','하이브리드 3~4L','0W-20 · 에어크리너 포함',68000],['h5','하이브리드 4.1~5L','',82000],['hover','하이브리드 5L 초과','0이면 별도 문의',0],['air','에어크리너 미교환 차감','',10000],['under','언더커버 탈거','직원용 토글 가산',5000],['lowFilter','하부 필터 작업','직원용 토글 가산',5000]],
+  engine:[['t4','3~4L 정찰가','3L 미만 포함 · 에어크리너 포함',56000],['t5','4.1~5L 정찰가','',67000],['t6','5.1~6L 정찰가','',76000],['t7','6.1~7L 정찰가','',85000],['t8','7.1~8L 정찰가','',94000],['over','8L 초과','0이면 별도 문의',0],['h4','하이브리드 3~4L','0W-20 · 에어크리너 포함',68000],['h5','하이브리드 4.1~5L','',82000],['hover','하이브리드 5L 초과','0이면 별도 문의',0],['air','에어크리너 미교환 차감','',10000]],
   tr:[['base','기본 공임','',40000],['perL','리터당 오일','ATF·MTF',12000],['mult','주입량 배수','순환식이면 1.5~2',1,'x'],['cvt','CVT·IVT 가산','',10000]],
   dct:[['base','기본 공임','',50000],['perL','리터당 오일','DCTF',25000],['mult','주입량 배수','',1,'x']],
   cool:[['base','기본 공임','',30000],['perL','리터당 부동액','',4000],['mult','주입량 배수','',1,'x']],
@@ -672,6 +680,7 @@ function loadS(){
 const CUST=document.documentElement.classList.contains('cust');
 let S=CUST?defaults():loadS(); let FLAGS=CUST?{}:(LS('jw_flags')||{});
 const TIERS=[['t4',0,4,'3~4L'],['t5',4.1,5,'4.1~5L'],['t6',5.1,6,'5.1~6L'],['t7',6.1,7,'6.1~7L'],['t8',7.1,8,'7.1~8L']];
+function manwon(n){ n=Math.round(n/1000)*1000; const m=Math.floor(n/10000), c=(n%10000)/1000; return (m?m+'만':'')+(c?c+'천':'')+'원'; }
 const HTIERS=[['h4',0,4,'3~4L'],['h5',4.1,5,'4.1~5L']];
 const isHev=()=>cur.cat==='engine'&&cur.f==='하이브리드';
 function tiersNow(){ return isHev()?HTIERS:TIERS; }
@@ -802,8 +811,6 @@ function calc(){
     const hev=isHev(), ov=hev?+P.hover:+P.over;
     if(!t && !ov) return {lines,L,ask:true};
     lines.push([t?`${hev?'하이브리드 ':''}정찰가 ${t[3]} 구간 (에어크리너 포함)`:`${hev?'하이브리드 5L':'8L'} 초과 정찰가`,t?+P[t[0]]:ov]);
-    if(!CUST&&cur.under) lines.push(['언더커버 탈거',+P.under]);
-    if(!CUST&&cur.low) lines.push(['하부 필터 작업',+P.lowFilter]);
     return {lines,L,tier:t};
   }
   if(c.type==='fluid'){
@@ -851,12 +858,13 @@ function renderOut(){
     const ticks=[...Array(sc+1).keys()].filter(i=>i>0&&i<sc).map(i=>`<u style="left:${i/sc*100}%"></u>`).join('');
     const nd=Math.min(20,Math.ceil(r.L)); const full=Math.floor(r.L); const half=r.L-full>=.25;
     let drops=''; if(r.L<=20) for(let i=0;i<Math.ceil(r.L);i++){ drops+=`<svg viewBox="0 0 24 24" class="${i<full?'f':(i===full&&half?'h':'')}"><path d="M12 2.5S5 10 5 14.5a7 7 0 0 0 14 0C19 10 12 2.5 12 2.5z"/></svg>`; }
-    g.innerHTML=`<div class="gauge"><div class="top"><span>${c.type==='multi'?'선택 항목 합계 주입량':'주입량'}</span><b>${r.L} L</b></div><div class="bar">${ticks}<i style="width:${pct}%"></i></div><div class="scale"><span>0</span><span>${sc/2}L</span><span>${sc}L</span></div><div class="drops">${drops}</div></div>`;
+    g.innerHTML=`<div class="gauge"><div class="top"><span class="gl">${ic('drop')}${c.type==='multi'?'선택 항목 합계 주입량':'엔진오일 주입량'}</span><b>${r.L} L</b></div><div class="bar">${ticks}<i style="width:${pct}%"></i></div><div class="scale"><span>0</span><span>${sc/2}L</span><span>${sc}L</span></div></div>`;
   }
   const ts=$('o-tiers'); ts.innerHTML='';
   if(c.type==='engine'&&!(CUST&&!cur.e)){ const hev=isHev(), lim=hev?5:8, ovv=hev?+S.engine.hover:+S.engine.over;
     const cur_t=r.tier?r.tier[0]:(r.L>lim?'over':null);
-    ts.innerHTML=(hev?'<div class="tiers-h">하이브리드 정찰제 (0W-20)</div>':'')+'<div class="tiers'+(hev?' hev':'')+'">'+tiersNow().map(t=>`<div class="tr${cur_t===t[0]?' on':''}"><span>${t[3]}</span><b>${(+S.engine[t[0]]/1000).toLocaleString('ko-KR')}<small>천원</small></b></div>`).join('')+`<div class="tr${cur_t==='over'?' on':''}"><span>${lim}L 초과</span><b>${ovv?(ovv/1000)+'<small>천원</small>':'문의'}</b></div></div>`; }
+    ts.innerHTML=`<div class="tiers-h">${ic(hev?'bolt':'oil')}${hev?'하이브리드 정찰제 (0W-20)':'엔진오일 정찰제'}</div>`+'<div class="tiers'+(hev?' hev':'')+'">'+tiersNow().map(t=>`<div class="tr${cur_t===t[0]?' on':''}"><span>${t[3]}</span><b>${manwon(+S.engine[t[0]])}</b></div>`).join('')+`<div class="tr${cur_t==='over'?' on':''}"><span>${lim}L 초과</span><b>${ovv?manwon(ovv):'문의'}</b></div></div>`
+      +`<div class="incnote">${ic('check')}<span>언더커버 탈거 및 하부필터 작업은 예상비용에 포함됨.<br><small>단, 예외 차종이 있을 수 있음</small></span></div>`; }
   // capacity candidates
   const lv=$('o-lvals'); lv.innerHTML='';
   if(c.type==='engine'&&cur.e&&cur.e.v.length>1){
@@ -877,13 +885,10 @@ function renderOut(){
   // options
   const op=$('o-opts'); op.innerHTML='';
   if(c.type==='engine'&&cur.e){
-    const mk=(key,lab,amt)=>{ const l=el('label','tog',`<input type="checkbox" ${cur[key]?'checked':''}><span class="sw"></span>${lab} <em>+${won(amt)}</em>`); l.querySelector('input').onchange=e=>{cur[key]=e.target.checked;renderOut();}; return l; };
-    op.append(mk('under','언더커버 탈거',S.engine.under), mk('low','하부 필터 작업',S.engine.lowFilter));
-    const sv=el('button','hbtn',ic('pin')+'이 엔진 조건 저장'); sv.onclick=()=>{ FLAGS[flagKey()]={under:!!cur.under,lowFilter:!!cur.low}; LS('jw_flags',FLAGS); toast('이 엔진의 작업 조건을 저장했어요'); renderFlags(); }; op.append(sv);
   }
   // manual input
   const mn=$('o-manual'); const mk2=cur.cat+'|'+(cur.g?cur.g.t:'');
-  if(c.type==='fixed'||!cur.g){ mn.innerHTML=''; mn.dataset.k=''; }
+  if(c.type==='fixed'||c.type==='engine'||!cur.g){ mn.innerHTML=''; mn.dataset.k=''; if(c.type==='engine') cur.man=null; }
   else if(mn.dataset.k!==mk2 || !$('man')){
     mn.dataset.k=mk2;
     mn.innerHTML=`<div class="manual">${ic('drop')}<span>${c.type==='multi'?'추가 항목 용량':'용량 직접 입력'}</span><input type="number" step="0.1" min="0" id="man" value="${cur.man??''}" placeholder="L"><span>L</span></div>`;
