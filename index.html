@@ -43,7 +43,7 @@ nav.tabs button{display:flex;align-items:center;gap:7px;border:0;background:tran
 nav.tabs button:hover{color:var(--ink)}
 nav.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 nav.tabs button.on svg{color:var(--or)}
-@media(max-width:760px){nav.tabs{margin-left:0;width:100%;overflow-x:auto}nav.tabs button{padding:8px 10px;font-size:13px;white-space:nowrap}.brand img{height:34px}}
+@media(max-width:760px){.logout{position:absolute;top:12px;right:16px;padding:9px}.logout span{display:none}nav.tabs{margin-left:0;width:100%;overflow-x:auto}nav.tabs button{padding:8px 10px;font-size:13px;white-space:nowrap}.brand img{height:34px}}
 
 main{max-width:1180px;margin:0 auto;padding:22px 20px 80px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
@@ -256,8 +256,88 @@ h3.sub3{font-size:14px;margin:20px 0 6px;font-weight:700}
 .incl b{margin-right:4px}.incl span{display:inline-flex;align-items:center;gap:5px;background:var(--line2);border-radius:999px;padding:6px 10px;font-weight:600}
 .incl span svg{color:var(--ok)}.incl em{font-style:normal;color:var(--sub)}
 </style>
+<script>
+/* 로그인(화면 잠금) — 계정 추가: ACCOUNTS 배열에 해시 추가 */
+window.JW_ACCOUNTS=[{sha:'3188e65d1ef846424b4fc7b2c0fd0cc520d8737e3224984501d5d444da3f4e09',fnv:'3b4735fe'},{sha:'3fd1d2bb830e610b4069b650e79aca9ad1822a2f17c934099488d69767e67a96',fnv:'1ec2658e'},{sha:'4f0d38b8b9a087d07cb0c392670c51ce42a6fd8fb7dd013576b386f6ce789a0f',fnv:'a785f7f4'}];
+(function(){try{var t=localStorage.getItem('jw_auth')||sessionStorage.getItem('jw_auth');
+if(t&&JW_ACCOUNTS.some(function(a){return a.sha===t}))document.documentElement.classList.add('authed');}catch(e){}})();
+</script>
+<style>
+html:not(.authed) body>header,html:not(.authed) body>main,html:not(.authed) body>footer{display:none}
+html.authed #login{display:none}
+#login{position:fixed;inset:0;z-index:100;background:#0a0a0a;color:#fff;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;overflow:auto;padding:24px}
+#login .bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+#login .bg:before{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,transparent 0 70%,rgba(255,140,30,.18) 80%,transparent 90%);animation:lspin 14s linear infinite}
+#login .bg:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/44px 44px;mask-image:radial-gradient(circle at 50% 42%,#000 0,transparent 65%);-webkit-mask-image:radial-gradient(circle at 50% 42%,#000 0,transparent 65%)}
+@keyframes lspin{to{transform:rotate(360deg)}}
+#login .box{position:relative;width:100%;max-width:400px;min-width:0;display:flex;flex-direction:column;align-items:center}
+#login .lg{position:relative;width:240px;height:150px;display:grid;place-items:center;margin-bottom:10px}
+#login .lg:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,130,20,.32),transparent);animation:lpulse 3.6s ease-in-out infinite}
+@keyframes lpulse{50%{transform:scale(1.12);opacity:.7}}
+#login .lg img{position:relative;width:230px;height:auto;filter:drop-shadow(0 10px 30px rgba(0,0,0,.6))}
+#login h1{margin:6px 0 4px;font-size:24px;font-weight:800;letter-spacing:-.6px}
+#login .lead{margin:0 0 24px;color:#8d8d8d;font-size:13.5px;display:flex;align-items:center;gap:6px}
+#login .lead svg{color:#ffa425}
+#login form{width:100%;display:flex;flex-direction:column;gap:12px}
+#login .fld{position:relative;display:flex;align-items:center;gap:12px;background:#151515;border:1.5px solid #2a2a2a;border-radius:16px;padding:0 14px;transition:.15s}
+#login .fld:focus-within{border-color:#f47e14;box-shadow:0 0 0 4px rgba(244,126,20,.16);background:#181512}
+#login .fld .fi{width:34px;height:34px;border-radius:10px;background:#222;display:grid;place-items:center;color:#9a9a9a;flex:none;transition:.15s}
+#login .fld:focus-within .fi{background:linear-gradient(135deg,#ffa425,#f26a0a);color:#fff}
+#login .fld label{position:absolute;left:62px;top:9px;font-size:11px;color:#777;font-weight:600;letter-spacing:.5px}
+#login .fld input{flex:1;min-width:0;border:0;background:transparent;outline:none;color:#fff;font-size:17px;font-weight:600;padding:27px 0 10px}
+#login .fld input::placeholder{color:#555;font-weight:400}
+#login .eye{border:0;background:transparent;color:#777;padding:6px;border-radius:8px}
+#login .eye:hover{color:#fff}
+#login .caps{display:none;align-items:center;gap:6px;font-size:12px;color:#ffb055;margin:-4px 4px 0}
+#login .caps.on{display:flex}
+#login .opts{display:flex;gap:10px;margin-top:2px}
+#login .ck{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:#131313;border:1px solid #262626;border-radius:14px;padding:11px 12px;cursor:pointer;user-select:none;font-size:13.5px;color:#cfcfcf;transition:.15s}
+#login .ck input{display:none}
+#login .ck .sw{width:34px;height:20px;border-radius:999px;background:#333;position:relative;flex:none;transition:.15s}
+#login .ck .sw:after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#999;transition:.15s}
+#login .ck input:checked+.sw{background:linear-gradient(135deg,#ffa425,#f26a0a)}
+#login .ck input:checked+.sw:after{left:16px;background:#fff}
+#login .ck small{display:block;color:#6f6f6f;font-size:11px;margin-top:1px}
+#login .ck:has(input:checked){border-color:#4a2f14;background:#1a130c}
+#login .go{position:relative;overflow:hidden;margin-top:6px;border:0;border-radius:16px;padding:17px;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,#ffa425,#f26a0a);box-shadow:0 14px 30px -14px rgba(242,106,10,.9);display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+#login .go:hover{filter:brightness(1.06);transform:translateY(-1px)}
+#login .go .bar{position:absolute;left:0;bottom:0;height:3px;width:0;background:#fff;opacity:.8}
+#login .go.load .bar{animation:lbar .7s ease forwards}
+@keyframes lbar{to{width:100%}}
+#login .go.ok{background:#14865b;box-shadow:0 14px 30px -14px rgba(20,134,91,.9)}
+#login .err{min-height:20px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:#ff7a6b;opacity:0;transition:.15s}
+#login .err.on{opacity:1}
+#login form.shake{animation:lshake .42s}
+@keyframes lshake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+#login .foot{margin-top:22px;display:flex;align-items:center;gap:8px;color:#5c5c5c;font-size:12px}
+#login .foot i{width:6px;height:6px;border-radius:50%;background:#14865b;box-shadow:0 0 0 4px rgba(20,134,91,.18)}
+#login.out{animation:lout .55s ease forwards}
+@keyframes lout{to{opacity:0;transform:scale(1.04)}}
+.logout{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--sub)}
+.logout:hover{color:var(--ink);border-color:#cfcfca}
+</style>
 </head>
 <body>
+<div id="login" role="dialog" aria-label="로그인">
+  <div class="bg"></div>
+  <div class="box">
+    <div class="lg"><img src="image/logo.png" alt="JW MOTORS CARWASH"></div>
+    <h1>로그인하세요</h1>
+    <p class="lead"><svg class="i s"><use href="#i-lock"/></svg>장우카센타 직원 전용 견적 조회</p>
+    <form id="lf" autocomplete="on" novalidate>
+      <div class="fld"><span class="fi"><svg class="i s"><use href="#i-user"/></svg></span><label for="lid">ID</label><input id="lid" name="username" autocomplete="username" placeholder="아이디" required></div>
+      <div class="fld"><span class="fi"><svg class="i s"><use href="#i-lock"/></svg></span><label for="lpw">PW</label><input id="lpw" name="password" type="password" autocomplete="current-password" placeholder="비밀번호" required><button type="button" class="eye" id="leye" aria-label="비밀번호 보기"><svg class="i s"><use href="#i-eye"/></svg></button></div>
+      <div class="caps" id="lcaps"><svg class="i s"><use href="#i-info"/></svg>Caps Lock이 켜져 있어요</div>
+      <div class="opts">
+        <label class="ck"><input type="checkbox" id="lauto"><span class="sw"></span><span>자동로그인<small>이 기기는 바로 입장</small></span></label>
+        <label class="ck"><input type="checkbox" id="lrem"><span class="sw"></span><span>기억하기<small>아이디 저장</small></span></label>
+      </div>
+      <button class="go" id="lgo" type="submit"><svg class="i s"><use href="#i-key"/></svg><span>로그인</span><i class="bar"></i></button>
+      <div class="err" id="lerr"><svg class="i s"><use href="#i-info"/></svg><span>아이디 또는 비밀번호가 맞지 않아요</span></div>
+    </form>
+    <div class="foot"><i></i>JW MOTORS · 장우카센타</div>
+  </div>
+</div>
 <svg width="0" height="0" style="position:absolute">
   <defs><linearGradient id="halfgrad"><stop offset="50%" stop-color="#ff9a22"/><stop offset="50%" stop-color="#333"/></linearGradient></defs>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></symbol>
@@ -290,6 +370,12 @@ h3.sub3{font-size:14px;margin:20px 0 6px;font-weight:700}
   <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 15.5V3.5M7.5 8 12 3.5 16.5 8"/><path d="M4 14.5v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3.5v12M7.5 11 12 15.5 16.5 11"/><path d="M4 14.5v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M3.5 3.5l17 17"/><path d="M10.4 6A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3 3.7M6.6 7.1C4 8.9 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4.3-1.1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l8.5-8.5M16 7l2.5 2.5M14 9l2 2"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14.5 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/><path d="M10 16.5 5.5 12 10 7.5M5.5 12h10"/></symbol>
   <symbol id="d" viewBox="0 0 24 24"><path d="M12 2.5S5 10 5 14.5a7 7 0 0 0 14 0C19 10 12 2.5 12 2.5z"/></symbol>
 </svg>
 
@@ -301,6 +387,7 @@ h3.sub3{font-size:14px;margin:20px 0 6px;font-weight:700}
     <button data-tab="table"><svg class="i s"><use href="#i-table"/></svg>가격표</button>
     <button data-tab="settings"><svg class="i s"><use href="#i-gear"/></svg>단가 설정</button>
   </nav>
+  <button class="logout" id="logout" title="로그아웃"><svg class="i s"><use href="#i-logout"/></svg><span>로그아웃</span></button>
 </div></header>
 
 <main>
@@ -843,6 +930,38 @@ $('copy-import').onclick=()=>{ copy($('import-script').textContent); toast('멘�
 let tt; function toast(m){ const t=$('toast'); t.querySelector('span').textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),1800); }
 
 renderCats(); renderSettings(); renderFlags(); renderImp(); renderVin(); $('q').focus();
+</script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id), root=document.documentElement;
+  const LSg=(k)=>{try{return localStorage.getItem(k)}catch(e){return null}}, LSs=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+  const SSs=(k,v)=>{try{v==null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){}};
+  const saved=LSg('jw_remember_id'); if(saved){ $('lid').value=saved; $('lrem').checked=true; }
+  $('lauto').checked=LSg('jw_auto')==='1';
+  function fnv(s){ let h=0x811c9dc5; for(const c of s){ h^=c.codePointAt(0); h=Math.imul(h,0x01000193)>>>0; } return h.toString(16).padStart(8,'0'); }
+  async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+  async function check(id,pw){ const raw='jwmotors|'+id.trim()+'|'+pw;
+    if(window.crypto&&crypto.subtle){ const h=await sha(raw); const a=JW_ACCOUNTS.find(a=>a.sha===h); return a?a.sha:null; }
+    const f=fnv(raw); const a=JW_ACCOUNTS.find(a=>a.fnv===f); return a?a.sha:null; }
+  $('leye').onclick=()=>{ const p=$('lpw'); const show=p.type==='password'; p.type=show?'text':'password'; $('leye').innerHTML=`<svg class="i s"><use href="#i-${show?'eyeoff':'eye'}"/></svg>`; p.focus(); };
+  const caps=e=>{ if(e.getModifierState) $('lcaps').classList.toggle('on',e.getModifierState('CapsLock')); };
+  $('lpw').addEventListener('keyup',caps); $('lpw').addEventListener('keydown',caps);
+  ['lid','lpw'].forEach(i=>$(i).addEventListener('input',()=>$('lerr').classList.remove('on')));
+  $('lf').addEventListener('submit',async e=>{ e.preventDefault();
+    const btn=$('lgo'); const tok=await check($('lid').value,$('lpw').value);
+    if(!tok){ const f=$('lf'); f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); $('lerr').classList.add('on'); $('lpw').value=''; $('lpw').focus(); return; }
+    LSs('jw_remember_id',$('lrem').checked?$('lid').value.trim():null);
+    if($('lauto').checked){ LSs('jw_auto','1'); LSs('jw_auth',tok); } else { LSs('jw_auto',null); LSs('jw_auth',null); }
+    SSs('jw_auth',tok);
+    btn.classList.add('load'); btn.querySelector('span').textContent='확인 중';
+    setTimeout(()=>{ btn.classList.add('ok'); btn.querySelector('span').textContent='환영합니다'; btn.querySelector('svg').innerHTML='<use href="#i-check"/>'; },450);
+    setTimeout(()=>{ root.classList.add('authed'); const l=$('login'); l.classList.add('out'); const q=document.getElementById('q'); if(q) q.focus(); },900);
+  });
+  $('logout').onclick=()=>{ LSs('jw_auth',null); LSs('jw_auto',null); SSs('jw_auth',null); const l=$('login'); l.classList.remove('out'); $('lpw').value=''; $('lauto').checked=false;
+    const b=$('lgo'); b.classList.remove('load','ok'); b.querySelector('span').textContent='로그인'; b.querySelector('svg').innerHTML='<use href="#i-key"/>';
+    root.classList.remove('authed'); ($('lid').value?$('lpw'):$('lid')).focus(); };
+  if(!root.classList.contains('authed')) setTimeout(()=>($('lid').value?$('lpw'):$('lid')).focus(),50);
+})();
 </script>
 </body>
 </html>
