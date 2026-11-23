@@ -815,7 +815,7 @@ function renderFlow(){
       if(!fuels.length) s2.append(el('div','empty',ic('info')+'이 세대는 엔진오일 제원이 없어요. 다른 세대를 고르거나 ZIC로 확인하세요.'));
       fuels.forEach(f=>{ const b=el('button','chip'+(cur.f===f?' on':''),`<span class="fi">${ic(FUELIC[f]||'pump')}</span>${f}`); b.onclick=()=>pickFuel(f); s2.append(b); });
       if(cur.f){
-        cur.g.x.filter(x=>x.f===cur.f).forEach(e=>{ const ls=[...new Set(e.v.map(v=>v.L))]; const b=el('button','chip'+(cur.e===e?' on':''),`<span>${e.e}<small>${ls.map(l=>l+'L').join(' / ')}</small></span>`); b.onclick=()=>pickEngine(e); s3.append(b); });
+        cur.g.x.filter(x=>x.f===cur.f).forEach(e=>{ const ls=[...new Set(e.v.map(v=>v.L))]; const b=el('button','chip'+(cur.e===e?' on':''),`<span>${e.e}${CUST?'':`<small>${ls.map(l=>l+'L').join(' / ')}</small>`}</span>`); b.onclick=()=>pickEngine(e); s3.append(b); });
       }
     }
     stepState('st2',cur.f?'done':(cur.g?'act':'')); stepState('st3',cur.e?'done':(cur.f?'act':''));
@@ -907,7 +907,7 @@ function renderOut(){
   $('o-car').innerHTML=parts.join(' <span style="color:#555">/</span> ');
   $('o-lbl').textContent=ask?'전화로 문의해주세요':noData?'용량을 선택하거나 입력하세요':(c.type==='engine'?'예상 교환비용 · 정찰제':'예상 교환비용');
   $('o-price').innerHTML=ask?`<span class="askp">별도 문의</span>`:noData?'—':`${total.toLocaleString('ko-KR')}<small>원</small>`;
-  $('o-sub').innerHTML = c.type==='engine' ? (ask?(r.L>(isHev()?5:8)?`${isHev()?'하이브리드 5L':'8L'} 초과 차량은 전화로 정확히 안내해드려요`:`이 세대는 주입량 확인이 필요해요`):`${isHev()?'하이브리드 0W-20 · ':''}에어크리너 포함 · 미교환 시 <b>−${won(S.engine.air)}</b>`) : c.type==='fixed' ? '고정 단가 · 단가 설정에서 바꿀 수 있어요' : '실제 주입량·교환 방식에 따라 달라질 수 있어요';
+  $('o-sub').innerHTML = c.type==='engine' ? (ask?(CUST?`이 차량은 전화로 정확한 금액을 안내해드려요`:r.L>(isHev()?5:8)?`${isHev()?'하이브리드 5L':'8L'} 초과 차량은 전화로 정확히 안내해드려요`:`이 세대는 주입량 확인이 필요해요`):`${isHev()?'하이브리드 0W-20 · ':''}에어크리너 포함 · 미교환 시 <b>−${won(S.engine.air)}</b>`) : c.type==='fixed' ? '고정 단가 · 단가 설정에서 바꿀 수 있어요' : '실제 주입량·교환 방식에 따라 달라질 수 있어요';
   // gauge
   const g=$('o-gauge'); g.innerHTML='';
   if(r.L && c.scale){
